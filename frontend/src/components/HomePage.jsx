@@ -71,7 +71,7 @@ export default function HomePage(){
     const createAttendee = async (e)=>{
         e.preventDefault();
         try {
-            await axios.post("http://localhost:3000/events", newAttendee)
+            await axios.post("http://localhost:3000/attendees", newAttendee)
             .then((response)=>setAttendeeFormResponse(response.data.message))
             .then(()=>handleResetNewAttendee());
         } catch (err) {

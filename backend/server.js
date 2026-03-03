@@ -43,3 +43,46 @@ server.post("/events", async(request,response)=>{
         response.status(400).send({message:error.message});
     }
 });
+
+const checkIfRegistered = (email, eventAttendees)=>{
+    return eventAttendees.includes(email)
+}
+
+server.get("/attendees", async(request,response)=>{
+    try{
+        const attendeeList = await Attendees.find();
+        response.send(attendeeList);
+    } catch(error){
+        console.log("db handler");
+        server.status(500).send({message:error.message});
+    }
+});
+server.post("/attendees", async(request,response)=>{
+    const {attendeeName, email, eventName} = request.body;
+    const newAttendee = new Attendees({
+        attendeeName,
+        email
+    });
+    try{
+        const attendeeList = await Attendees.find()
+        let checkIfRegistered = false
+        for(let i = 0; i < attendeeList.length; i++)
+        {
+            if (attendeeList[i].email === newAttendee.email)
+            {
+                checkIfRegistered = true;
+                break;
+            }
+        }
+        if(checkIfRegistered)
+        {
+            response.status(200).send({message: "Attendee already registered"});
+        } else
+        {
+            await newEvent.save();
+            response.status(200).send({message: "event added successfully"});
+        }
+    } catch(error){
+        response.status(400).send({message:error.message});
+    }
+});
